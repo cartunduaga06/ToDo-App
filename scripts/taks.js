@@ -20,9 +20,10 @@ window.addEventListener('load', function () {
     };
 
     let btnCerrarSesion = document.getElementById('closeApp');
-
+    let formCrearTarea = document.querySelector('.nueva-tarea');
    obtenerNombreUsuario();
    consultarTareas();
+   botonesCambioEstado();
 
 
   /* -------------------------------------------------------------------------- */
@@ -83,8 +84,27 @@ window.addEventListener('load', function () {
 
   function consultarTareas() {
     
+    let settings = {
+        method: 'GET',  
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+    }
+  };
+    fetch(url + "/tasks/", settings)
     
-
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw "Error en la llamada Ajax";
+            }
+        })
+        .then(function (data) {
+            console.log(data);
+            renderizarTareas(data)
+        }
+        )
 
 
   };
@@ -95,7 +115,39 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
 
   formCrearTarea.addEventListener('submit', function (event) {
-    
+    event.preventDefault();
+    let tarea = document.getElementById('nuevaTarea').value;
+    let data = {
+        
+        description: tarea,
+        completed: false
+    };
+
+    let settings = {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        }
+    };
+
+    fetch(url + "/tasks/", settings)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw "Error en la llamada Ajax";
+            }
+        })
+        .then(function (data) {
+            console.log(data);
+            formCrearTarea.reset();
+            consultarTareas();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 
 
 
@@ -108,7 +160,19 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
   function renderizarTareas(listado) {
 
-
+    let listaTareas = document.querySelector('.tareas-pendientes');
+            listaTareas.innerHTML = "";
+            listado.forEach(function (tarea) {
+                listaTareas.innerHTML += `
+                <li class="tarea">
+                    <p>${tarea.description}</p>
+                    <div class="tareas-pendientes">
+                        <i class=""></i>
+                        <i class=""></i>
+                    </div>
+                </li>
+                `;
+            });
 
 
 
@@ -121,9 +185,43 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
   function botonesCambioEstado() {
     
+    let botoncheck = document.querySelectorAll('.fa-check-circle');
+    let botonTrash = document.querySelectorAll('.fa-trash');
+    console.log(botoncheck);
     
-
-
+    botoncheck.forEach(function (boton) {
+        boton.addEventListener('click', function (event) {
+            event.preventDefault();
+            let idTarea = event.target.parentElement.parentElement.id;
+            console.log(idTarea);
+            let data = {
+                completed: true
+            };
+            let settings = {
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                }
+            };
+            fetch(url + "/tasks/" + `{${idTarea}}`, settings)
+                .then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw "Error en la llamada Ajax";
+                    }
+                })
+                .then(function (data) {
+                    console.log(data);
+                    consultarTareas();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        });
+    });
 
   }
 
