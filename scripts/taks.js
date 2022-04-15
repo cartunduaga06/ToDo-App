@@ -11,20 +11,13 @@ window.addEventListener('load', function () {
   /* ---------------- variables globales y llamado a funciones ---------------- */
     const url = "https://ctd-todo-api.herokuapp.com/v1"
     const token = localStorage.getItem('token');
-    const settings = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        }
-    };
+    
 
     let btnCerrarSesion = document.getElementById('closeApp');
     let formCrearTarea = document.querySelector('.nueva-tarea');
    obtenerNombreUsuario();
    consultarTareas();
-   botonesCambioEstado();
-
+   
 
   /* -------------------------------------------------------------------------- */
   /*                          FUNCIÓN 1 - Cerrar sesión                         */
@@ -106,6 +99,9 @@ window.addEventListener('load', function () {
         }
         )
 
+        .catch(function (error) {
+            console.log(error);
+        });
 
   };
 
@@ -163,78 +159,141 @@ window.addEventListener('load', function () {
     let listaTareas = document.querySelector('.tareas-pendientes');
             listaTareas.innerHTML = "";
             listado.forEach(function (tarea) {
-                listaTareas.innerHTML += `
-                <li class="tarea">
-                    <p>${tarea.description}</p>
-                    <div class="tareas-pendientes">
-                        <i class=""></i>
-                        <i class=""></i>
-                    </div>
-                </li>
+                let nuevaTarea = document.createElement('li');
+                nuevaTarea.classList.add('tarea');
+                nuevaTarea.innerHTML = `
+                 
+                 <span hidden>${tarea.id}</span >
+                 
+                <p >${tarea.description}</p>
+                <div class="acciones">
+                    <button class="far fa-check-circle"></button>
+                    <button class="fas fa-trash"></butt>
+                </div>
                 `;
-            });
+                if (tarea.completed) {
+                    nuevaTarea.classList.add('completa');
+                }
+
+                listaTareas.appendChild(nuevaTarea);
+            }
+            );
 
 
+            
+            let botoncheck = document.querySelectorAll('.far.fa-check-circle');
+            let botonTrash = document.querySelectorAll('.fa-trash');
+    
+            console.log(botoncheck);
+            botoncheck.forEach((boton) => boton.addEventListener("click", botonesCambioEstado));
+            botonTrash.forEach((boton) => boton.addEventListener("click", botonBorrarTarea));
 
+            let cantidadFinalizada = document.getElementById('cantidad-finalizadas');
+            
+            cantidadFinalizada.innerText = listado.filter(tarea => tarea.completed == true).length;
 
-
-  };
+        };
 
   /* -------------------------------------------------------------------------- */
   /*                  FUNCIÓN 6 - Cambiar estado de tarea [PUT]                 */
   /* -------------------------------------------------------------------------- */
-  function botonesCambioEstado() {
-    
-    let botoncheck = document.querySelectorAll('.fa-check-circle');
-    let botonTrash = document.querySelectorAll('.fa-trash');
-    console.log(botoncheck);
-    
-    botoncheck.forEach(function (boton) {
-        boton.addEventListener('click', function (event) {
-            event.preventDefault();
-            let idTarea = event.target.parentElement.parentElement.id;
-            console.log(idTarea);
-            let data = {
-                completed: true
-            };
-            let settings = {
-                method: 'PUT',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token
-                }
-            };
-            fetch(url + "/tasks/" + `{${idTarea}}`, settings)
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw "Error en la llamada Ajax";
-                    }
-                })
-                .then(function (data) {
-                    console.log(data);
-                    consultarTareas();
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+  function botonesCambioEstado(e) {
+         // Obtenemos el elemento que disparo el evento
+  const elemento = e.target;
+    // Obtenemos el padre del elemento que disparo el evento
+    const padre = elemento.parentElement.parentElement;
+    console.log(padre);
+    // Obtenemos el texto del elemento padre
+    const texto = padre.querySelector('p').innerText;
+    console.log(texto);
+    // Obtenemos el id de la tarea
+    const id = padre.querySelector('span').innerText;
+    console.log("este es el id " + id);
+    // Creamos un objeto con la tarea
+    const tarea = {
+        description: texto,
+        completed: !elemento.classList.contains('completa')
+            
+    };
+    // Creamos un objeto con los datos de la petición
+    const settings = {
+        method: 'PUT',
+        body: JSON.stringify(tarea),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        }
+    };
+
+    console.log(settings);
+    // Hacemos la petición
+    fetch(url + "/tasks/" + id, settings)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw "Error en la llamada Ajax";
+            }
+        })
+        .then(function (data) {
+            console.log(data);
+            consultarTareas();
+        })
+        .catch(function (error) {
+            console.log(error);
         });
-    });
 
-  }
 
+
+    };
+
+  
+
+    
+  
+  
 
   /* -------------------------------------------------------------------------- */
   /*                     FUNCIÓN 7 - Eliminar tarea [DELETE]                    */
   /* -------------------------------------------------------------------------- */
-  function botonBorrarTarea() {
+  function botonBorrarTarea(event) {
    
+    const elemento = event.target;
     
-
+    const padre = elemento.parentElement.parentElement;
+    console.log(padre);
     
+    const id = padre.querySelector('span').innerText;
+    console.log("este es el id " + id);
 
-  };
+    const settings = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        
+        }
+    }
+    
+    fetch(url + "/tasks/" + id, settings)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw "Error en la llamada Ajax";
+            }
+        })
+        .then(function (data) {
+            console.log(data);
+            consultarTareas();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+
+        
+
+  }
 
 });

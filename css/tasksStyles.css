@@ -234,3 +234,10 @@ footer {
 footer img {
     height: 100%;
 }
+
+.completa{
+    text-decoration: line-through;
+    color: blue;
+    
+    
+}
