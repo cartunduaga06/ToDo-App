@@ -3,7 +3,7 @@ window.addEventListener('load', function () {
    let form = document.forms[0];
     let email = document.getElementById('inputEmail');
     let password = document.getElementById('inputPassword');
-    const url = "https://ctd-todo-api.herokuapp.com/v1/";
+    const url = "https://ctd-fe2-todo.herokuapp.com/v1/";
     
 
 
@@ -12,7 +12,7 @@ window.addEventListener('load', function () {
     /*            FUNCIÓN 1: Escuchamos el submit y preparamos el envío           */
     /* -------------------------------------------------------------------------- */
     form.addEventListener('submit', function (event) {
-       
+        
         event.preventDefault();
         let emailValue = email.value;
         let passwordValue = password.value;
@@ -30,10 +30,12 @@ window.addEventListener('load', function () {
             }
         };
 
-
+        
         realizarLogin(settings);
-
+        
         form.reset();
+        
+
     });
 
 
@@ -68,12 +70,15 @@ window.addEventListener('load', function () {
 
             .catch(function (error) {
                 console.log(error);
+                
             });
 
 
 
         
     };
+
+    
 
 
 });

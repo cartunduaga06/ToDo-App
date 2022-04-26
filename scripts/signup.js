@@ -7,8 +7,9 @@ window.addEventListener('load', function () {
     let email = document.getElementById('inputEmail');
     let password = document.getElementById('inputPassword');
     let password2 = document.getElementById('inputPasswordRepetida');
-    const url =  "https://ctd-todo-api.herokuapp.com/v1";
-
+    const url =  "https://ctd-fe2-todo.herokuapp.com/v1";
+    
+    
     
 
     

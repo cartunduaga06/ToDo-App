@@ -16,18 +16,21 @@
   <!-- ---------------------- logica aplicada en login ----------------------- -->
   <script src="./scripts/utils.js"></script>
   <script src="./scripts/login.js"></script>
+  <script  src="./scripts/loaders.js"></script>
 
 </head>
 
 <body>
-
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <header class="container">
     <nav>
       <h1>To-Do App</h1>
       <img src="./assets/DigitalHouse_Logo_White.png" alt="logo DH">
     </nav>
   </header>
-
+  <div id="contenedor-carga" >
+    <div id="carga" hidden></div>
+    </div>
   <div class="container">
     <form>
       <div class="form-header">
@@ -49,7 +52,7 @@
     </div>
 
   </div>
-
+ 
 </body>
 
 </html>

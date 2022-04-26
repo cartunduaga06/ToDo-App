@@ -1,5 +1,8 @@
 // SEGURIDAD: Si no se encuentra en localStorage info del usuario
 // no lo deja acceder a la página, redirigiendo al login inmediatamente.
+
+
+
 if (!localStorage.getItem('token')) {
     window.location.href = 'index.html';
 }
@@ -9,7 +12,7 @@ if (!localStorage.getItem('token')) {
 window.addEventListener('load', function () {
 
   /* ---------------- variables globales y llamado a funciones ---------------- */
-    const url = "https://ctd-todo-api.herokuapp.com/v1"
+    const url = "https://ctd-fe2-todo.herokuapp.com/v1"
     const token = localStorage.getItem('token');
     
 
@@ -24,10 +27,23 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
 
   btnCerrarSesion.addEventListener('click', function () {
-
-    localStorage.removeItem('token');
-    window.location.href = 'index.html';
-
+      
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '¡Sí, cerrar sesión!'
+        }).then((result) => {
+        if (result.value) {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        }
+    })
+      
+      
 
 
   });
